@@ -4,7 +4,7 @@ import pulsar
 from _pulsar import ConsumerType
 
 from scripts.extLogging import logger
-from loadYamlFile import ExtraConfig
+from scripts.loadYamlFile import ExtraConfig
 
 
 class MqSupporter:

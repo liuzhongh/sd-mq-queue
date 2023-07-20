@@ -2,7 +2,7 @@ import base64
 import uuid
 import oss2
 
-from loadYamlFile import ExtraConfig
+from scripts.loadYamlFile import ExtraConfig
 
 
 class ExtraFileStorage:

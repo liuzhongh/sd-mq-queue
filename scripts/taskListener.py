@@ -5,7 +5,7 @@ import threading
 from scripts.extLogging import logger
 from scripts.mqEntry import MqSupporter
 
-from fileStorage import ExtraFileStorage
+from scripts.fileStorage import ExtraFileStorage
 from loadYamlFile import ExtraConfig
 from modules.api import models
 from modules.api.api import Api
