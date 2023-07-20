@@ -1,5 +1,4 @@
 import base64
-import io
 import json
 import threading
 
@@ -64,9 +63,7 @@ def saveToStorage(storage, response):
 
     image_array = []
     for i in range(len(images)):
-        bytes_io = io.BytesIO()
-        bytes_io.write(images[i])
-        bytes_data = bytes_io.getvalue()
+        bytes_data = base64.b64decode(images[i])
         url = storage.saveByte2Server(bytes_data, opts.samples_format.lower())
         image_array.append(url)
 
