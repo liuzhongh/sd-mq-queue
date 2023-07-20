@@ -1,4 +1,5 @@
 import base64
+import io
 import json
 import threading
 
@@ -57,17 +58,19 @@ def taskHandler(msg: Message, environment=None):
 
 
 def saveToStorage(storage, response):
-    images = response.dict().images
+    images = response.images
     if images is None:
         return
 
     image_array = []
     for i in range(len(images)):
-        bytes_data = images[i].encode('utf-8')
+        bytes_io = io.BytesIO()
+        bytes_io.write(images[i])
+        bytes_data = bytes_io.getvalue()
         url = storage.saveByte2Server(bytes_data, opts.samples_format.lower())
         image_array.append(url)
 
-    response.dict().images = image_array
+    response.images = image_array
 
 
 class TaskListener(threading.Thread):
