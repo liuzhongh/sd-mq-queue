@@ -17,6 +17,7 @@ from modules.shared import opts
 def taskHandler(msg: Message, environment=None):
     from fastapi import FastAPI
     data = json.loads(msg.data())
+    initData(data)
     config = ExtraConfig(environment).get_config()
 
     if msg.topic_name() == config["queue"]["topic-t2i"]:
