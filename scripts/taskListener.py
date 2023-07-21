@@ -78,7 +78,9 @@ def handle_default():
 
 def handle_roop(storage, data):
     logger.info("roop: %s", data)
-    data["args"][0] = storage.downloadFile(data["args"][0])
+    resp = storage.downloadFile(data["args"][0])
+    encoded_file = base64.b64encode(resp.read()).decode('utf-8')
+    data["args"][0] = encoded_file
 
 
 scripts_handle = {
