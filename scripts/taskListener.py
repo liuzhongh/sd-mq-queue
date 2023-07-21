@@ -77,6 +77,7 @@ def handle_default():
 
 def handle_roop(data):
     print(f"roop: {data}")
+    data["args"][0] = "tsslfllweflwlfwf-ewfewf-ewfwefw-fwef-wfewfwef.png"
 
 
 scripts_handle = {
