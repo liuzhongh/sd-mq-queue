@@ -91,7 +91,6 @@ def handle_roop(storage, data):
 def handle_controlnet(storage, data):
     logger.info("controlnet: %s", data)
     for item in data["args"]:
-        logger.info("controlnet item: %s", item["input_image"])
         if item["input_image"] is None:
             continue
         resp = storage.downloadFile(item["input_image"])
