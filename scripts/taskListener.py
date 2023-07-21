@@ -21,12 +21,12 @@ def taskHandler(msg: Message, environment=None):
 
     if msg.topic_name() == config["queue"]["topic-t2i"]:
         txt2imgreq = models.StableDiffusionTxt2ImgProcessingAPI(**data)
-        initData(txt2imgreq)
+        storage = ExtraFileStorage(environment)
+        initData(storage, txt2imgreq)
         logger.info("Text2Image Request '%s'", txt2imgreq)
         app = FastAPI()
         api = Api(app, queue_lock)
         response = api.text2imgapi(txt2imgreq)
-        storage = ExtraFileStorage(environment)
         saveToStorage(storage, response)
         logger.info("Text2Image Result '%s'", response.dict())
         json_data = json.dumps(response.dict()).encode('utf-8')
@@ -36,11 +36,11 @@ def taskHandler(msg: Message, environment=None):
                           msg.properties())
     else:
         req = models.StableDiffusionImg2ImgProcessingAPI(**data)
-        initData(req)
-        logger.info("Image2Image Request '%s'", req)
 
         try:
             storage = ExtraFileStorage(environment)
+            initData(storage, req)
+            logger.info("Image2Image Request '%s'", req)
             resp = storage.downloadFile(req.init_images[0])
             encoded_file = base64.b64encode(resp.read()).decode('utf-8')
             req.init_images = [encoded_file]
@@ -76,9 +76,9 @@ def handle_default():
     logger.info("Nothing to do")
 
 
-def handle_roop(data):
-    logger.info("roop %s:", data)
-    data["args"][0] = "tsslfllweflwlfwf-ewfewf-ewfwefw-fwef-wfewfwef.png"
+def handle_roop(storage, data):
+    logger.info("roop: %s", data)
+    data["args"][0] = storage.downloadFile(data["args"][0])
 
 
 scripts_handle = {
@@ -86,10 +86,10 @@ scripts_handle = {
 }
 
 
-def initData(req):
+def initData(storage, req):
     for alwayson_script_name in req.alwayson_scripts.keys():
         handler = scripts_handle.get(alwayson_script_name.lower(), handle_default)
-        handler(req.alwayson_scripts[alwayson_script_name])
+        handler(storage, req.alwayson_scripts[alwayson_script_name])
 
 
 class TaskListener(threading.Thread):
