@@ -94,9 +94,9 @@ def handle_controlnet(storage, data):
         logger.info("controlnet item: %s", item)
         if item["input_image"] is None:
             continue
-        resp = storage.downloadFile(item.input_image)
+        resp = storage.downloadFile(item["input_image"])
         encoded_file = base64.b64encode(resp.read()).decode('utf-8')
-        item.input_image = encoded_file
+        item["input_image"] = encoded_file
 
 
 scripts_handle = {
