@@ -30,7 +30,7 @@ def taskHandler(msg: Message, environment=None):
         api = Api(app, queue_lock)
         response = api.text2imgapi(txt2imgreq)
         saveToStorage(storage, response)
-        response["parameters"] = vars(copied_req)
+        response.parameters = copied_req
         logger.info("Text2Image Result '%s'", response.dict())
         json_data = json.dumps(response.dict()).encode('utf-8')
         mq = MqSupporter(environment)
@@ -52,7 +52,7 @@ def taskHandler(msg: Message, environment=None):
             api = Api(app, queue_lock)
             response = api.img2imgapi(req)
             saveToStorage(storage, response)
-            response["parameters"] = vars(copied_req)
+            response.parameters = copied_req
             logger.info("Image2Image Result '%s'", response.dict())
             json_data = json.dumps(response.dict()).encode('utf-8')
             mq = MqSupporter(environment)
