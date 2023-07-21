@@ -1,4 +1,5 @@
 import base64
+import copy
 import json
 import threading
 
@@ -21,13 +22,15 @@ def taskHandler(msg: Message, environment=None):
 
     if msg.topic_name() == config["queue"]["topic-t2i"]:
         txt2imgreq = models.StableDiffusionTxt2ImgProcessingAPI(**data)
+        logger.info("Text2Image Request '%s'", txt2imgreq)
+        copied_req = copy.deepcopy(txt2imgreq)
         storage = ExtraFileStorage(environment)
         initData(storage, txt2imgreq)
-        logger.info("Text2Image Request '%s'", txt2imgreq)
         app = FastAPI()
         api = Api(app, queue_lock)
         response = api.text2imgapi(txt2imgreq)
         saveToStorage(storage, response)
+        response["parameters"] = vars(copied_req)
         logger.info("Text2Image Result '%s'", response.dict())
         json_data = json.dumps(response.dict()).encode('utf-8')
         mq = MqSupporter(environment)
@@ -39,8 +42,9 @@ def taskHandler(msg: Message, environment=None):
 
         try:
             storage = ExtraFileStorage(environment)
-            initData(storage, req)
             logger.info("Image2Image Request '%s'", req)
+            copied_req = copy.deepcopy(req)
+            initData(storage, req)
             resp = storage.downloadFile(req.init_images[0])
             encoded_file = base64.b64encode(resp.read()).decode('utf-8')
             req.init_images = [encoded_file]
@@ -48,6 +52,7 @@ def taskHandler(msg: Message, environment=None):
             api = Api(app, queue_lock)
             response = api.img2imgapi(req)
             saveToStorage(storage, response)
+            response["parameters"] = vars(copied_req)
             logger.info("Image2Image Result '%s'", response.dict())
             json_data = json.dumps(response.dict()).encode('utf-8')
             mq = MqSupporter(environment)
