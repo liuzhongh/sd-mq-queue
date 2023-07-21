@@ -73,11 +73,11 @@ def saveToStorage(storage, response):
 
 
 def handle_default():
-    print("Nothing to do")
+    logger.info("Nothing to do")
 
 
 def handle_roop(data):
-    print(f"roop: {data}")
+    logger.info("roop %s:", data)
     data["args"][0] = "tsslfllweflwlfwf-ewfewf-ewfwefw-fwef-wfewfwef.png"
 
 
@@ -87,10 +87,9 @@ scripts_handle = {
 
 
 def initData(req):
-    if "alwayson_scripts" in req:
-        for alwayson_script_name in req.alwayson_scripts.keys():
-            handler = scripts_handle.get(alwayson_script_name.lower(), handle_default)
-            handler(req.alwayson_scripts[alwayson_script_name])
+    for alwayson_script_name in req.alwayson_scripts.keys():
+        handler = scripts_handle.get(alwayson_script_name.lower(), handle_default)
+        handler(req.alwayson_scripts[alwayson_script_name])
 
 
 class TaskListener(threading.Thread):
