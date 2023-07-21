@@ -17,11 +17,11 @@ from modules.shared import opts
 def taskHandler(msg: Message, environment=None):
     from fastapi import FastAPI
     data = json.loads(msg.data())
-    initData(data)
     config = ExtraConfig(environment).get_config()
 
     if msg.topic_name() == config["queue"]["topic-t2i"]:
         txt2imgreq = models.StableDiffusionTxt2ImgProcessingAPI(**data)
+        initData(txt2imgreq)
         logger.info("Text2Image Request '%s'", txt2imgreq)
         app = FastAPI()
         api = Api(app, queue_lock)
@@ -36,6 +36,7 @@ def taskHandler(msg: Message, environment=None):
                           msg.properties())
     else:
         req = models.StableDiffusionImg2ImgProcessingAPI(**data)
+        initData(req)
         logger.info("Image2Image Request '%s'", req)
 
         try:
