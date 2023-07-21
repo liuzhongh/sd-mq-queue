@@ -85,9 +85,10 @@ scripts_handle = {
 
 
 def initData(req):
-    for alwayson_script_name in req.alwayson_scripts.keys():
-        handler = scripts_handle.get(alwayson_script_name.lower(), handle_default)
-        handler(req.alwayson_scripts[alwayson_script_name])
+    if "alwayson_scripts" in req:
+        for alwayson_script_name in req.alwayson_scripts.keys():
+            handler = scripts_handle.get(alwayson_script_name.lower(), handle_default)
+            handler(req.alwayson_scripts[alwayson_script_name])
 
 
 class TaskListener(threading.Thread):
