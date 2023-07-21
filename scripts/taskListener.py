@@ -70,6 +70,25 @@ def saveToStorage(storage, response):
     response.images = image_array
 
 
+def handle_default():
+    print("Nothing to do")
+
+
+def handle_roop(data):
+    print(f"roop: {data}")
+
+
+scripts_handle = {
+    "roop": handle_roop
+}
+
+
+def initData(req):
+    for alwayson_script_name in req.alwayson_scripts.keys():
+        handler = scripts_handle.get(alwayson_script_name.lower(), handle_default)
+        handler(req.alwayson_scripts[alwayson_script_name])
+
+
 class TaskListener(threading.Thread):
     def __init__(self, environment=None):
         super().__init__()
