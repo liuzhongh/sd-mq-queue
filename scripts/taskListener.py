@@ -88,8 +88,19 @@ def handle_roop(storage, data):
     data["args"][0] = encoded_file
 
 
+def handle_controlnet(storage, data):
+    logger.info("controlnet: %s", data)
+    for item in data["args"]:
+        if item.input_image is None:
+            continue
+        resp = storage.downloadFile(item.input_image)
+        encoded_file = base64.b64encode(resp.read()).decode('utf-8')
+        item.input_image = encoded_file
+
+
 scripts_handle = {
-    "roop": handle_roop
+    "roop": handle_roop,
+    "controlnet": handle_controlnet
 }
 
 
